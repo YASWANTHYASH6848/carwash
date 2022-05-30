@@ -1,0 +1,41 @@
+server:
+  port: 8999
+  
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+      
+spring:
+  application:
+    name: carWash-api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: customer-microservice
+          uri: lb://customer-microservice
+          predicates:
+            - Path=/customer/** 
+        - id: washer-microservice
+          uri: lb://washer-microservice
+          predicates:
+            - Path=/washer/**   
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+hystrix:
+  command:
+    fallbackcmd:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 5000
+            
